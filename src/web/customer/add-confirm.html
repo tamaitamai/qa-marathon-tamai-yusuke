@@ -10,9 +10,70 @@
 <body>
     <div class="container mt-5">
         <!-- ここにHTMLを書く -->
+        <h1>顧客確認画面</h1>
+        <form id="customer-form">
+            <div id="company-name-text"></div>
+            <input type="hidden" name="companyName" id="company-name">
+            <div id="industry-text"></div>
+            <input type="hidden" name="industry" id="industry">        
+            <div id="contact-text"></div>
+            <input type="hidden" name="contact" id="contact">
+            <div id="location-text"></div>
+            <input type="hidden" name="location" id="location">
+            <button>OK</button>            
+        </form>        
     </div>
-    <script type="module">
-        <!-- ここにJSを書く -->
+    <script type="module">        
+        // Function to parse query parameters from the URL
+        function getQueryParameters() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            return Object.fromEntries(urlParams.entries());
+        }
+
+        // Example of using the function to get parameters
+        const queryParams = getQueryParameters();
+        console.log(queryParams);
+        
+        // Now you can use queryParams to access the values, for example:
+        const companyName = queryParams.companyName;
+        const industry = queryParams.industry;
+        const contact = queryParams.contact;
+        const location = queryParams.location;
+
+        $('#company-name-text').text("顧客名： "+companyName);
+        $('#industry-text').text("業種： "+ industry);
+        $('#contact-text').text("連絡先： "+contact);
+        $('#location-text').text("所在地： "+location);
+
+        $('#company-name').val(companyName);
+        $('#industry').val(industry);
+        $('#contact').val(contact);
+        $('#location').val(location);        
+
+        import config from '../config.js';
+        document.getElementById('customer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(config.apiUrl + '/add-customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams([...formData])
+            }).then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    alert('顧客情報が正常に保存されました。');
+                    // フォームをリセット
+                    document.getElementById('customer-form').reset();
+                } else {
+                    alert('保存に失敗しました。');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
