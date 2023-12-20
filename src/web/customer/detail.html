@@ -7,11 +7,13 @@
 </head>
 <body>
     <h1>会社概要</h1>
-    <div id="company-name"></div>
-    <div id="industry"></div>
-    <div id="contact"></div>
-    <div id="location"></div>    
+    <div><label for="company-name">会社名：</label><input type="text" name="companyName" id="company-name"></div>
+    <div><label for="industry">業種：</label><input type="text" name="industry" id="industry"></div>
+    <div><label for="contact">連絡先：</label><input type="text" name="contact" id="contact"></div>
+    <div><label for="location">所在地：</label><input type="text" name="location" id="location"></div>
+
     <button id="customer-delete">削除</button>
+    <button id="customer-update">編集</button>
     <script type="module">
         //転送された会社データ
         function getQueryParameters() {
@@ -37,13 +39,14 @@
         })
         .then((data) => {
             console.log(data); // ここで解析されたデータをログに出力
-            $('#company-name').text('会社名： '+data[0].company_name);            
-            $('#industry').text('業種： '+data[0].industry);
-            $('#contact').text('連絡先： '+data[0].contact);
-            $('#location').text('所在地： '+data[0].location);
+            $('#company-name').val(data[0].company_name);            
+            $('#industry').val(data[0].industry);
+            $('#contact').val(data[0].contact);
+            $('#location').val(data[0].location);
         })
         .catch((error) => console.error(error));
 
+        //データを削除する
         $('#customer-delete').click(function(){
             var confirmResult = window.confirm('削除してもいいですか');
 
@@ -67,6 +70,37 @@
             } else {                
                 console.log('削除処理をキャンセルしました');
             }                                   
+        })
+
+        //データの更新        
+        $('#customer-update').click(function(){
+            var companyName=$('#company-name').val();
+            var industry=$('#industry').val();
+            var contact=$('#contact').val();
+            var location=$('#location').val();            
+            fetch(`${config.apiUrl}/updateCustomer`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'customerId': queryParams.customerId ,
+                'companyName': companyName,
+                'industry': industry,
+                'contact': contact,
+                'location': location}),
+            })                    
+            .then((response) => {
+                console.log(response); // ここでレスポンスオブジェクトをログに出力
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data); // ここで解析されたデータをログに出力
+                $('#company-name').val(data[0].company_name);            
+                $('#industry').val(data[0].industry);
+                $('#contact').val(data[0].contact);
+                $('#location').val(data[0].location);
+            })
+            .catch((error) => console.error(error));
         })
         
     </script>

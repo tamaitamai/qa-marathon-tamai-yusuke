@@ -46,7 +46,7 @@ app.post("/customerById", async (req, res) => {
   }
 });
 
-//企業idから情報を抜き出す
+//企業データを削除する
 app.post("/deleteCustomer", async (req, res) => {  
   try {
     const { customerId } = req.body;      
@@ -58,6 +58,19 @@ app.post("/deleteCustomer", async (req, res) => {
   }
 });
 
+//企業データを更新する
+app.post("/updateCustomer", async (req, res) => {  
+  try {
+    const {customerId, companyName, industry, contact, location } = req.body;       
+    const customerData = await pool.query("UPDATE customers SET company_name=$2,industry=$3,contact=$4,location=$5 WHERE customer_id=$1;"
+    ,[customerId, companyName, industry, contact, location]);    
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
+//企業データを追加する
 app.post("/add-customer", async (req, res) => {
   try {    
     const { companyName, industry, contact, location } = req.body;    
