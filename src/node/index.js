@@ -33,6 +33,31 @@ app.get("/customers", async (req, res) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+//企業idから情報を抜き出す
+app.post("/customerById", async (req, res) => {  
+  try {
+    const { customerId } = req.body;      
+    const customerData = await pool.query("SELECT * FROM customers WHERE customer_id=$1"
+    ,[customerId]);
+    res.send(customerData.rows);
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
+//企業idから情報を抜き出す
+app.post("/deleteCustomer", async (req, res) => {  
+  try {
+    const { customerId } = req.body;      
+    const customerData = await pool.query("DELETE FROM customers WHERE customer_id=$1;"
+    ,[customerId]);    
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
 app.post("/add-customer", async (req, res) => {
   try {    
     const { companyName, industry, contact, location } = req.body;    

@@ -37,8 +37,8 @@
             e.preventDefault();
             const formData = new FormData(this);
 
-            const queryString = new URLSearchParams([...formData]).toString();
-
+            const queryString = new URLSearchParams([...formData]).toString();            
+            
             window.location.href =  './add-confirm.html?'+ queryString;
         });
 
